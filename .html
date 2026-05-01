@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>快手后台管理系统</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+        font-family:"Microsoft YaHei",sans-serif;
+        background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+    .container{max-width:500px;width:100%;padding:20px}
+
+    .box{
+        background:rgba(255,255,255,.05);
+        backdrop-filter:blur(10px);
+        border-radius:20px;
+        padding:40px;
+        border:1px solid rgba(255,255,255,.1);
+        text-align:center;
+    }
+
+    h1{color:#00d4ff;font-size:28px;margin-bottom:10px}
+    h2{color:#00d4ff;font-size:24px;margin-bottom:30px}
+
+    input{
+        width:100%;
+        padding:15px;
+        margin-bottom:20px;
+        border-radius:10px;
+        border:1px solid rgba(0,212,255,.3);
+        background:rgba(0,0,0,.3);
+        color:#fff;
+        font-size:16px;
+    }
+
+    button{
+        width:100%;
+        padding:15px;
+        border:none;
+        border-radius:10px;
+        font-size:16px;
+        cursor:pointer;
+        background:linear-gradient(135deg,#00d4ff,#0099cc);
+        color:#000;
+        font-weight:bold;
+    }
+
+    .vip{
+        display:none;
+        margin-bottom:20px;
+        padding:10px 20px;
+        background:linear-gradient(135deg,#ff6b6b,#feca57);
+        border-radius:30px;
+        color:#000;
+        font-weight:bold;
+    }
+
+    .progress{
+        height:20px;
+        background:rgba(255,255,255,.1);
+        border-radius:10px;
+        overflow:hidden;
+        margin-bottom:20px;
+    }
+    .bar{
+        height:100%;
+        width:0%;
+        background:linear-gradient(90deg,#00d4ff,#00ff88,#00d4ff);
+        animation:shimmer 2s infinite;
+    }
+    @keyframes shimmer{
+        0%{background-position:200% 0}
+        100%{background-position:-200% 0}
+    }
+
+    .grid{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:15px;
+        margin-top:20px;
+    }
+    .grid button{
+        background:rgba(255,255,255,.08);
+        color:#fff;
+        border:1px solid rgba(255,255,255,.1);
+        border-radius:15px;
+        padding:20px;
+        transition:.3s;
+    }
+    .grid button:hover{
+        transform:translateY(-5px);
+        border-color:#00d4ff;
+    }
+
+    .hidden{display:none}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- 登录页 -->
+    <div class="box" id="login">
+        <h1>⚡ 快手后台</h1>
+        <div class="vip" id="vip">👑 尊贵的VIP用户</div>
+        <input id="key" placeholder="请输入卡密">
+        <button onclick="check()">验证</button>
+    </div>
+
+    <!-- 加载页 -->
+    <div class="box hidden" id="load">
+        <h2>正在尝试入侵 ACE 服务器</h2>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <div id="txt">0%</div>
+    </div>
+
+    <!-- 成功页 -->
+    <div class="box hidden" id="success">
+        <h2 style="font-size:36px;background:linear-gradient(135deg,#00ff88,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
+            入侵成功
+        </h2>
+        <p style="color:rgba(255,255,255,.6);margin-bottom:20px">✓ 服务器连接正常</p>
+
+        <div class="grid">
+            <button onclick="go('wushuai')">吴帅</button>
+            <button onclick="go('yangyuxuan')">杨雨轩</button>
+            <button onclick="go('qinshuocheng')">秦硕成</button>
+            <button onclick="go('wangjiaxin')">王佳鑫</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const key = "HXBnb";
+
+function check(){
+    if(document.getElementById("key").value === key){
+        document.getElementById("vip").style.display = "inline-block";
+        setTimeout(()=>{
+            document.getElementById("login").classList.add("hidden");
+            load();
+        },800);
+    }else{
+        alert("卡密错误");
+    }
+}
+
+function load(){
+    document.getElementById("load").classList.remove("hidden");
+    let p=0;
+    const bar=document.getElementById("bar");
+    const txt=document.getElementById("txt");
+
+    const t=setInterval(()=>{
+        p+=Math.random()*15;
+        if(p>100)p=100;
+        bar.style.width=p+"%";
+        txt.innerText=Math.floor(p)+"%";
+        if(p===100){
+            clearInterval(t);
+            setTimeout(()=>{
+                document.getElementById("load").classList.add("hidden");
+                document.getElementById("success").classList.remove("hidden");
+            },800);
+        }
+    },200);
+}
+
+function go(u){
+    const urls={
+        wushuai:"https://v.kuaishou.com/KURYc1PN",
+        yangyuxuan:"https://v.kuaishou.com/KQ7sLkc1",
+        qinshuocheng:"https://v.kuaishou.com/KIvhxP4R",
+        wangjiaxin:"https://v.kuaishou.com/JPbXiuFT"
+    };
+    window.open(urls[u],"_blank");
+}
+</script>
+</body>
+</html>
