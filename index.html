@@ -2,77 +2,79 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>快手后台管理系统</title>
+<title>快手后台 💕</title>
 <style>
     *{margin:0;padding:0;box-sizing:border-box}
+
     body{
-        font-family:"Microsoft YaHei",sans-serif;
-        background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+        font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+        background:linear-gradient(135deg,#ffafbd,#ffc3a0,#fcbad3);
         min-height:100vh;
         display:flex;
         justify-content:center;
         align-items:center;
     }
+
     .container{max-width:500px;width:100%;padding:20px}
 
     .box{
-        background:rgba(255,255,255,.05);
-        backdrop-filter:blur(10px);
-        border-radius:20px;
-        padding:40px;
-        border:1px solid rgba(255,255,255,.1);
+        background:rgba(255,255,255,0.6);
+        backdrop-filter:blur(12px);
+        border-radius:25px;
+        padding:35px 25px;
+        border:2px solid rgba(255,255,255,0.8);
+        box-shadow:0 10px 30px rgba(255,105,180,0.3);
         text-align:center;
     }
 
-    h1{color:#00d4ff;font-size:28px;margin-bottom:10px}
-    h2{color:#00d4ff;font-size:24px;margin-bottom:30px}
+    h1{
+        color:#ff5e99;
+        font-size:26px;
+        margin-bottom:8px;
+        text-shadow:0 2px 5px rgba(255,255,255,0.6);
+    }
 
-    input{
-        width:100%;
-        padding:15px;
-        margin-bottom:20px;
-        border-radius:10px;
-        border:1px solid rgba(0,212,255,.3);
-        background:rgba(0,0,0,.3);
-        color:#fff;
-        font-size:16px;
+    h2{
+        color:#ff6f91;
+        font-size:22px;
+        margin-bottom:25px;
     }
 
     button{
         width:100%;
-        padding:15px;
+        padding:14px;
         border:none;
-        border-radius:10px;
+        border-radius:18px;
         font-size:16px;
         cursor:pointer;
-        background:linear-gradient(135deg,#00d4ff,#0099cc);
-        color:#000;
+        background:linear-gradient(135deg,#ff9acb,#ffb6c1);
+        color:#fff;
         font-weight:bold;
+        box-shadow:0 5px 15px rgba(255,105,180,0.4);
+        transition:.3s;
     }
 
-    .vip{
-        display:none;
-        margin-bottom:20px;
-        padding:10px 20px;
-        background:linear-gradient(135deg,#ff6b6b,#feca57);
-        border-radius:30px;
-        color:#000;
-        font-weight:bold;
+    button:hover{
+        transform:translateY(-3px);
+        box-shadow:0 10px 25px rgba(255,105,180,0.6);
     }
 
     .progress{
-        height:20px;
-        background:rgba(255,255,255,.1);
+        height:18px;
+        background:rgba(255,255,255,0.5);
         border-radius:10px;
         overflow:hidden;
-        margin-bottom:20px;
+        margin-bottom:15px;
     }
+
     .bar{
         height:100%;
         width:0%;
-        background:linear-gradient(90deg,#00d4ff,#00ff88,#00d4ff);
+        background:linear-gradient(90deg,#ff9acb,#ffd6eb,#ff9acb);
+        background-size:200% 100%;
         animation:shimmer 2s infinite;
     }
+
     @keyframes shimmer{
         0%{background-position:200% 0}
         100%{background-position:-200% 0}
@@ -81,39 +83,40 @@
     .grid{
         display:grid;
         grid-template-columns:repeat(2,1fr);
-        gap:15px;
+        gap:12px;
         margin-top:20px;
     }
+
     .grid button{
-        background:rgba(255,255,255,.08);
-        color:#fff;
-        border:1px solid rgba(255,255,255,.1);
-        border-radius:15px;
-        padding:20px;
-        transition:.3s;
+        background:rgba(255,255,255,0.7);
+        color:#ff5e99;
+        border:2px solid #ffcce5;
+        border-radius:20px;
+        padding:18px 10px;
+        font-size:15px;
     }
+
     .grid button:hover{
-        transform:translateY(-5px);
-        border-color:#00d4ff;
+        background:#fff;
+        border-color:#ff9acb;
     }
 
     .hidden{display:none}
+
+    .status{
+        color:#ff6f91;
+        margin-bottom:20px;
+        font-size:14px;
+    }
 </style>
 </head>
 
 <body>
 <div class="container">
 
-    <!-- 登录页 -->
-    <div class="box" id="login">
-        <h1>⚡ 快手后台</h1>
-        <div class="vip" id="vip">👑 尊贵的VIP用户</div>
-        <input id="key" placeholder="请输入卡密">
-        <button onclick="check()">验证</button>
-    </div>
-
     <!-- 加载页 -->
-    <div class="box hidden" id="load">
+    <div class="box" id="load">
+        <h1>💖 快手后台</h1>
         <h2>正在尝试入侵 ACE 服务器</h2>
         <div class="progress"><div class="bar" id="bar"></div></div>
         <div id="txt">0%</div>
@@ -121,36 +124,35 @@
 
     <!-- 成功页 -->
     <div class="box hidden" id="success">
-        <h2 style="font-size:36px;background:linear-gradient(135deg,#00ff88,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
-            入侵成功
+        <h2 style="font-size:34px;color:#ff5e99;">
+            🎉 入侵成功
         </h2>
-        <p style="color:rgba(255,255,255,.6);margin-bottom:20px">✓ 服务器连接正常</p>
+        <p class="status">✨ 服务器连接正常 · 欢迎回来</p>
 
         <div class="grid">
             <button onclick="go('wushuai')">吴帅</button>
             <button onclick="go('yangyuxuan')">杨雨轩</button>
             <button onclick="go('qinshuocheng')">秦硕成</button>
-            <button onclick="go('wangjiaxin')">王佳鑫</button>
+            <button onclick="go('wangjiaxin')">王嘉鑫</button>
+            <button onclick="go('qingyuebing')">秦阅冰</button>
+            <button onclick="go('qingzhengyv')">秦振宇</button>
+
+            <button onclick="go('wangsihiyu')">王诗雨</button>
+            <button onclick="go('liusiuyu')">刘思雨</button>
+            <button onclick="go('wuhao')">吴浩宇</button>
+            <button onclick="go('jianweiwei')">简微微</button>
+            <button onclick="go('wengjiajia')">翁嘉家</button>
+            <button onclick="go('wuyuhao')">吴宇浩</button>
+            <button onclick="go('chenqizhong')">陈启忠</button>
+            <button onclick="go('liubingyi')">刘冰怡</button>
+            <button onclick="go('helianhai')">何连海</button>
+            <button onclick="go('renji')">任吉</button>
         </div>
     </div>
 
 </div>
 
 <script>
-const key = "HXBnb";
-
-function check(){
-    if(document.getElementById("key").value === key){
-        document.getElementById("vip").style.display = "inline-block";
-        setTimeout(()=>{
-            document.getElementById("login").classList.add("hidden");
-            load();
-        },800);
-    }else{
-        alert("卡密错误");
-    }
-}
-
 function load(){
     document.getElementById("load").classList.remove("hidden");
     let p=0;
@@ -177,10 +179,26 @@ function go(u){
         wushuai:"https://v.kuaishou.com/KURYc1PN",
         yangyuxuan:"https://v.kuaishou.com/KQ7sLkc1",
         qinshuocheng:"https://v.kuaishou.com/KIvhxP4R",
-        wangjiaxin:"https://v.kuaishou.com/JPbXiuFT"
+        wangjiaxin:"https://v.kuaishou.com/JPbXiuFT",
+        qingyuebing:"https://v.kuaishou.com/KGL45VNJ",
+        qingzhengyv:"https://v.kuaishou.com/JU1x3M6x",
+
+        wangsihiyu:"https://v.kuaishou.com/JDkSRwDZ",
+        liusiuyu:"https://v.kuaishou.com/J2M1qW2t",
+        wuhao:"https://v.kuaishou.com/JzMowMEX",
+        jianweiwei:"https://v.kuaishou.com/nHdHyWE8",
+        wengjiajia:"https://v.kuaishou.com/JU2PGW6I",
+        wuyuhao:"https://v.kuaishou.com/KxwEFlv1",
+        chenqizhong:"https://v.kuaishou.com/Kpc7WoKX",
+        liubingyi:"https://v.kuaishou.com/noQDq8t9",
+        helianhai:"https://v.kuaishou.com/JVGRoJ3y",
+        renji:"https://v.kuaishou.com/nhY7EvkH"
     };
     window.open(urls[u],"_blank");
 }
+
+// 页面加载后直接开始
+load();
 </script>
 </body>
 </html>
