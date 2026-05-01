@@ -2,121 +2,187 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>快手 💕</title>
+<title>快手后台 💕</title>
+
 <style>
-    *{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap');
 
-    body{
-        font-family:"Microsoft YaHei","PingFang SC",sans-serif;
-        background:linear-gradient(135deg,#ffafbd,#ffc3a0,#fcbad3);
-        min-height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    .container{max-width:500px;width:100%;padding:20px}
+body{
+    font-family:'ZCOOL KuaiLe','Ma Shan Zheng',cursive;
+    background:linear-gradient(120deg,#ffd6e8,#ffafbd,#ffc3a0);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
 
-    .box{
-        background:rgba(255,255,255,0.6);
-        backdrop-filter:blur(12px);
-        border-radius:25px;
-        padding:35px 25px;
-        border:2px solid rgba(255,255,255,0.8);
-        box-shadow:0 10px 30px rgba(255,105,180,0.3);
-        text-align:center;
-    }
+/* ⭐ 星星 */
+.stars{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+}
+.star{
+    position:absolute;
+    width:6px;
+    height:6px;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 2s infinite;
+}
+@keyframes twinkle{
+    0%,100%{opacity:.3}
+    50%{opacity:1}
+}
 
-    h1{
-        color:#ff5e99;
-        font-size:26px;
-        margin-bottom:8px;
-        text-shadow:0 2px 5px rgba(255,255,255,0.6);
-    }
+/* ❤️ 爱心 */
+.hearts{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+}
+.heart{
+    position:absolute;
+    font-size:18px;
+    animation:floatHeart 6s linear infinite;
+    opacity:.8;
+}
+@keyframes floatHeart{
+    0%{transform:translateY(110vh) scale(1)}
+    100%{transform:translateY(-10vh) scale(1.2)}
+}
 
-    h2{
-        color:#ff6f91;
-        font-size:22px;
-        margin-bottom:25px;
-    }
+.container{
+    position:relative;
+    z-index:1;
+    max-width:520px;
+    width:95%;
+    padding:20px;
+}
 
-    button{
-        width:100%;
-        padding:14px;
-        border:none;
-        border-radius:18px;
-        font-size:16px;
-        cursor:pointer;
-        background:linear-gradient(135deg,#ff9acb,#ffb6c1);
-        color:#fff;
-        font-weight:bold;
-        box-shadow:0 5px 15px rgba(255,105,180,0.4);
-        transition:.3s;
-    }
+.box{
+    background:rgba(255,255,255,0.65);
+    backdrop-filter:blur(15px);
+    border-radius:30px;
+    padding:35px 25px;
+    border:3px solid rgba(255,192,203,0.9);
+    box-shadow:
+        0 10px 30px rgba(255,105,180,0.35),
+        inset 0 0 20px rgba(255,255,255,0.6);
+    text-align:center;
+}
 
-    button:hover{
-        transform:translateY(-3px);
-        box-shadow:0 10px 25px rgba(255,105,180,0.6);
-    }
+h1{
+    color:#ff5e99;
+    font-size:30px;
+    margin-bottom:10px;
+    text-shadow:0 3px 6px rgba(255,255,255,0.8);
+}
 
-    .progress{
-        height:18px;
-        background:rgba(255,255,255,0.5);
-        border-radius:10px;
-        overflow:hidden;
-        margin-bottom:15px;
-    }
+h2{
+    color:#ff6f91;
+    font-size:22px;
+    margin-bottom:25px;
+}
 
-    .bar{
-        height:100%;
-        width:0%;
-        background:linear-gradient(90deg,#ff9acb,#ffd6eb,#ff9acb);
-        background-size:200% 100%;
-        animation:shimmer 2s infinite;
-    }
+/* 🎵 音乐按钮 */
+.music-btn{
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:linear-gradient(135deg,#ffb6c1,#ffd6eb);
+    border:none;
+    border-radius:25px;
+    padding:8px 14px;
+    font-size:13px;
+    color:#ff5e99;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(255,105,180,0.4);
+    transition:.3s;
+}
+.music-btn:hover{
+    transform:scale(1.1);
+}
 
-    @keyframes shimmer{
-        0%{background-position:200% 0}
-        100%{background-position:-200% 0}
-    }
+/* 进度条 */
+.progress{
+    height:18px;
+    background:rgba(255,255,255,0.6);
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+.bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff9acb,#ffd6eb,#ff9acb);
+    background-size:200% 100%;
+    animation:shimmer 2s infinite;
+}
+@keyframes shimmer{
+    0%{background-position:200% 0}
+    100%{background-position:-200% 0}
+}
 
-    .grid{
-        display:grid;
-        grid-template-columns:repeat(2,1fr);
-        gap:12px;
-        margin-top:20px;
-    }
+/* 网格按钮 */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:20px;
+}
 
-    .grid button{
-        background:rgba(255,255,255,0.7);
-        color:#ff5e99;
-        border:2px solid #ffcce5;
-        border-radius:20px;
-        padding:18px 10px;
-        font-size:15px;
-    }
+.grid button{
+    background:rgba(255,255,255,0.8);
+    color:#ff5e99;
+    border:2px solid #ffcce5;
+    border-radius:22px;
+    padding:18px 10px;
+    font-size:15px;
+    transition:.3s;
+}
 
-    .grid button:hover{
-        background:#fff;
-        border-color:#ff9acb;
-    }
+.grid button:hover{
+    background:#fff;
+    border-color:#ff9acb;
+    transform:scale(1.08) rotate(-2deg);
+}
 
-    .hidden{display:none}
-
-    .status{
-        color:#ff6f91;
-        margin-bottom:20px;
-        font-size:14px;
-    }
+.hidden{display:none}
+.status{color:#ff6f91;margin-bottom:20px;font-size:14px}
 </style>
 </head>
 
 <body>
+
+<!-- ⭐ 星星 -->
+<div class="stars" id="stars"></div>
+
+<!-- ❤️ 爱心 -->
+<div class="hearts" id="hearts"></div>
+
+<!-- 🎵 音乐 -->
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵 音乐 ON</button>
+
+<!-- ✅ みくみくにしてあげる♪ -->
+<audio id="bgm" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-cute-game-over-tune-689.mp3" type="audio/mpeg">
+</audio>
+
 <div class="container">
 
     <!-- 加载页 -->
     <div class="box" id="load">
-        <h1>💖 快手用户查找</h1>
+        <h1>💖 快手后台</h1>
         <h2>正在尝试入侵 ACE 服务器</h2>
         <div class="progress"><div class="bar" id="bar"></div></div>
         <div id="txt">0%</div>
@@ -124,10 +190,8 @@
 
     <!-- 成功页 -->
     <div class="box hidden" id="success">
-        <h2 style="font-size:34px;color:#ff5e99;">
-            🎉 用户显示成功
-        </h2>
-        <p class="status">✨ 服务器正常 ·不定时更新 </p>
+        <h2 style="font-size:36px;color:#ff5e99;">🎉 入侵成功</h2>
+        <p class="status">✨ 服务器连接正常 · 欢迎回来</p>
 
         <div class="grid">
             <button onclick="go('wushuai')">吴帅</button>
@@ -141,7 +205,7 @@
             <button onclick="go('liusiuyu')">刘思雨</button>
             <button onclick="go('wuhao')">吴浩宇</button>
             <button onclick="go('jianweiwei')">简微微</button>
-            <button onclick="go('wengjiajia')">翁嘉家</button>
+            <button onclick="go('wengjiajia')">翁嘉嘉</button>
             <button onclick="go('wuyuhao')">吴宇浩</button>
             <button onclick="go('chenqizhong')">陈启忠</button>
             <button onclick="go('liubingyi')">刘冰怡</button>
@@ -153,6 +217,40 @@
 </div>
 
 <script>
+/* ⭐ 星星 */
+for(let i=0;i<40;i++){
+    const s=document.createElement("div");
+    s.className="star";
+    s.style.left=Math.random()*100+"%";
+    s.style.top=Math.random()*100+"%";
+    s.style.animationDelay=Math.random()*2+"s";
+    document.getElementById("stars").appendChild(s);
+}
+
+/* ❤️ 爱心 */
+const hearts=["💗","💕","💖","💘"];
+for(let i=0;i<15;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText=hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left=Math.random()*100+"%";
+    h.style.animationDuration=(4+Math.random()*4)+"s";
+    h.style.fontSize=(14+Math.random()*10)+"px";
+    document.getElementById("hearts").appendChild(h);
+}
+
+/* 音乐控制 */
+let musicOn=true;
+const bgm=document.getElementById("bgm");
+const btn=document.getElementById("musicBtn");
+
+function toggleMusic(){
+    musicOn=!musicOn;
+    musicOn?(bgm.play(),btn.innerText="🎵 音乐 ON"):
+           (bgm.pause(),btn.innerText="🔇 音乐 OFF");
+}
+
+/* 加载条 */
 function load(){
     document.getElementById("load").classList.remove("hidden");
     let p=0;
@@ -174,6 +272,7 @@ function load(){
     },200);
 }
 
+/* 跳转 */
 function go(u){
     const urls={
         wushuai:"https://v.kuaishou.com/KURYc1PN",
@@ -197,7 +296,6 @@ function go(u){
     window.open(urls[u],"_blank");
 }
 
-// 页面加载后直接开始
 load();
 </script>
 </body>
