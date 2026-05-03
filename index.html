@@ -5,38 +5,30 @@
 <title>Supernatural Overlay</title>
 
 <style>
-body {
+html, body {
     margin: 0;
-    background: transparent;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    background: transparent;
     font-family: Consolas, monospace;
 }
 
-/* ===== UI 面板 ===== */
 #ui {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 270px;
+    width: 260px;
     padding: 14px;
     border-radius: 16px;
     background: rgba(30,10,60,0.45);
     backdrop-filter: blur(14px);
     box-shadow: 0 0 24px rgba(120,60,255,0.6);
-    z-index: 20;
     color: #d6b3ff;
     font-size: 12px;
+    z-index: 20;
 }
 
-h3 {
-    margin: 0 0 8px;
-}
-
-.row { margin: 4px 0; }
-
-.tag { color: #7f5cff; }
-
-/* ===== Canvas 层 ===== */
 canvas {
     position: fixed;
     top: 0;
@@ -49,134 +41,46 @@ canvas {
 
 <body>
 
-<!-- UI -->
 <div id="ui">
     <h3>👁 灵能外挂 vMAX</h3>
-    <div class="row"><span class="tag">FPS:</span> <span id="fps">144</span></div>
-    <div class="row"><span class="tag">目标:</span> <span id="target">未锁定</span></div>
-    <div class="row"><span class="tag">状态:</span> <span id="status">待机</span></div>
-
-    <div class="row">— ESP 玩家列表 —</div>
-    <div id="esp"></div>
+    <div>FPS: <span id="fps">--</span></div>
+    <div>目标: <span id="target">未锁定</span></div>
 </div>
 
-<!-- 骨骼 & 雷达 -->
 <canvas id="draw"></canvas>
 
 <script>
-const ui = document.getElementById("ui");
 const canvas = document.getElementById("draw");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resize() {
+    canvas.width = window.screen.width;
+    canvas.height = window.screen.height;
+}
+resize();
+window.addEventListener("resize", resize);
 
-/* ===== 拖动 UI ===== */
-let drag=false,ox,oy;
-ui.onmousedown=e=>{drag=true;ox=e.clientX-ui.offsetLeft;oy=e.clientY-ui.offsetTop};
-document.onmousemove=e=>{if(!drag)return;ui.style.left=e.clientX-ox+"px";ui.style.top=e.clientY-oy+"px"};
-document.onmouseup=()=>drag=false;
-
-/* ===== 模拟玩家数据 ===== */
+/* ===== 模拟玩家 ===== */
 let players = [];
-for(let i=0;i<4;i++){
-    players.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        name: "Player_"+i
-    });
-}
 
-/* ===== 骨骼绘制 ===== */
 function drawSkeleton(p){
-    ctx.strokeStyle = "rgba(0,255,136,0.9)";
-    ctx.lineWidth = 2;
-
-    // 头
+    ctx.strokeStyle = "#00ff88";
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 14, 0, Math.PI*2);
-    ctx.stroke();
-
-    // 身体
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y+14);
-    ctx.lineTo(p.x, p.y+60);
-    ctx.stroke();
-
-    // 手
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y+30);
-    ctx.lineTo(p.x-20, p.y+50);
-    ctx.moveTo(p.x, p.y+30);
-    ctx.lineTo(p.x+20, p.y+50);
-    ctx.stroke();
-
-    // 腿
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y+60);
-    ctx.lineTo(p.x-15, p.y+100);
-    ctx.moveTo(p.x, p.y+60);
-    ctx.lineTo(p.x+15, p.y+100);
+    ctx.arc(p.x, p.y, 12, 0, Math.PI*2);
     ctx.stroke();
 }
 
-/* ===== 雷达 ===== */
-function drawRadar(){
-    const cx=150, cy=canvas.height-150;
-    ctx.strokeStyle = "rgba(0,255,136,0.5)";
-    ctx.beginPath();
-    ctx.arc(cx,cy,80,0,Math.PI*2);
-    ctx.stroke();
-
-    players.forEach(p=>{
-        ctx.fillStyle="red";
-        ctx.beginPath();
-        ctx.arc(
-            cx + (p.x-canvas.width/2)*0.1,
-            cy + (p.y-canvas.height/2)*0.1,
-            4,0,Math.PI*2
-        );
-        ctx.fill();
-    });
-}
-
-/* ===== ESP ===== */
-function updateESP(){
-    esp.innerHTML = players.map(p=>
-        `<div>${p.name} [${Math.floor(Math.random()*100)}HP]</div>`
-    ).join("");
-}
-
-/* ===== 主循环 ===== */
 function loop(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    players.forEach(p=>{
-        drawSkeleton(p);
-        p.x += (Math.random()-0.5)*6;
-        p.y += (Math.random()-0.5)*6;
-    });
-
-    drawRadar();
-    updateESP();
-
+    players.forEach(drawSkeleton);
     requestAnimationFrame(loop);
 }
 loop();
 
-/* ===== WebSocket 模拟 ===== */
-function mockWS(){
-    setInterval(()=>{
-        if(Math.random()>0.8){
-            target.textContent = players[Math.floor(Math.random()*players.length)].name;
-            status.textContent = "锁定 🔴";
-        }
-    },1200);
-}
-mockWS();
-
-/* 状态 */
-status.textContent = "运行中";
+/* 测试：点屏幕生成目标 */
+document.addEventListener("click", e=>{
+    players.push({x:e.clientX, y:e.clientY});
+});
 </script>
 
 </body>
