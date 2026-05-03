@@ -1,302 +1,183 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>快手后台 💕</title>
+<title>Supernatural Overlay</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+body {
+    margin: 0;
+    background: transparent;
+    overflow: hidden;
+    font-family: Consolas, monospace;
 }
 
-body{
-    font-family:'ZCOOL KuaiLe','Ma Shan Zheng',cursive;
-    background:linear-gradient(120deg,#ffd6e8,#ffafbd,#ffc3a0);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
+/* ===== UI 面板 ===== */
+#ui {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 270px;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(30,10,60,0.45);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 0 24px rgba(120,60,255,0.6);
+    z-index: 20;
+    color: #d6b3ff;
+    font-size: 12px;
 }
 
-/* ⭐ 星星 */
-.stars{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:0;
-}
-.star{
-    position:absolute;
-    width:6px;
-    height:6px;
-    background:#fff;
-    border-radius:50%;
-    animation:twinkle 2s infinite;
-}
-@keyframes twinkle{
-    0%,100%{opacity:.3}
-    50%{opacity:1}
+h3 {
+    margin: 0 0 8px;
 }
 
-/* ❤️ 爱心 */
-.hearts{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:0;
-}
-.heart{
-    position:absolute;
-    font-size:18px;
-    animation:floatHeart 6s linear infinite;
-    opacity:.8;
-}
-@keyframes floatHeart{
-    0%{transform:translateY(110vh) scale(1)}
-    100%{transform:translateY(-10vh) scale(1.2)}
-}
+.row { margin: 4px 0; }
 
-.container{
-    position:relative;
-    z-index:1;
-    max-width:520px;
-    width:95%;
-    padding:20px;
-}
+.tag { color: #7f5cff; }
 
-.box{
-    background:rgba(255,255,255,0.65);
-    backdrop-filter:blur(15px);
-    border-radius:30px;
-    padding:35px 25px;
-    border:3px solid rgba(255,192,203,0.9);
-    box-shadow:
-        0 10px 30px rgba(255,105,180,0.35),
-        inset 0 0 20px rgba(255,255,255,0.6);
-    text-align:center;
+/* ===== Canvas 层 ===== */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    pointer-events: none;
 }
-
-h1{
-    color:#ff5e99;
-    font-size:30px;
-    margin-bottom:10px;
-    text-shadow:0 3px 6px rgba(255,255,255,0.8);
-}
-
-h2{
-    color:#ff6f91;
-    font-size:22px;
-    margin-bottom:25px;
-}
-
-/* 🎵 音乐按钮 */
-.music-btn{
-    position:absolute;
-    top:12px;
-    right:12px;
-    background:linear-gradient(135deg,#ffb6c1,#ffd6eb);
-    border:none;
-    border-radius:25px;
-    padding:8px 14px;
-    font-size:13px;
-    color:#ff5e99;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(255,105,180,0.4);
-    transition:.3s;
-}
-.music-btn:hover{
-    transform:scale(1.1);
-}
-
-/* 进度条 */
-.progress{
-    height:18px;
-    background:rgba(255,255,255,0.6);
-    border-radius:10px;
-    overflow:hidden;
-    margin-bottom:15px;
-}
-.bar{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#ff9acb,#ffd6eb,#ff9acb);
-    background-size:200% 100%;
-    animation:shimmer 2s infinite;
-}
-@keyframes shimmer{
-    0%{background-position:200% 0}
-    100%{background-position:-200% 0}
-}
-
-/* 网格按钮 */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-top:20px;
-}
-
-.grid button{
-    background:rgba(255,255,255,0.8);
-    color:#ff5e99;
-    border:2px solid #ffcce5;
-    border-radius:22px;
-    padding:18px 10px;
-    font-size:15px;
-    transition:.3s;
-}
-
-.grid button:hover{
-    background:#fff;
-    border-color:#ff9acb;
-    transform:scale(1.08) rotate(-2deg);
-}
-
-.hidden{display:none}
-.status{color:#ff6f91;margin-bottom:20px;font-size:14px}
 </style>
 </head>
 
 <body>
 
-<!-- ⭐ 星星 -->
-<div class="stars" id="stars"></div>
+<!-- UI -->
+<div id="ui">
+    <h3>👁 灵能外挂 vMAX</h3>
+    <div class="row"><span class="tag">FPS:</span> <span id="fps">144</span></div>
+    <div class="row"><span class="tag">目标:</span> <span id="target">未锁定</span></div>
+    <div class="row"><span class="tag">状态:</span> <span id="status">待机</span></div>
 
-<!-- ❤️ 爱心 -->
-<div class="hearts" id="hearts"></div>
-
-<!-- 🎵 音乐 -->
-<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵 音乐 ON</button>
-
-<!-- ✅ みくみくにしてあげる♪ -->
-<audio id="bgm" loop>
-    <source src="https://cdn.jsdelivr.net/gh/MIAN57/-/初音.mp3" type="audio/mpeg">
-</audio>
-
-<div class="container">
-
-    <!-- 加载页 -->
-    <div class="box" id="load">
-        <h1>💖 快手后台</h1>
-        <h2>正在尝试入侵 ACE 服务器</h2>
-        <div class="progress"><div class="bar" id="bar"></div></div>
-        <div id="txt">0%</div>
-    </div>
-
-    <!-- 成功页 -->
-    <div class="box hidden" id="success">
-        <h2 style="font-size:36px;color:#ff5e99;">🎉 入侵成功</h2>
-        <p class="status">✨ 服务器连接正常 · 欢迎回来</p>
-
-        <div class="grid">
-            <button onclick="go('wushuai')">吴帅</button>
-            <button onclick="go('yangyuxuan')">杨雨轩</button>
-            <button onclick="go('qinshuocheng')">秦硕成</button>
-            <button onclick="go('wangjiaxin')">王嘉鑫</button>
-            <button onclick="go('qingyuebing')">秦阅冰</button>
-            <button onclick="go('qingzhengyv')">秦振宇</button>
-
-            <button onclick="go('wangsihiyu')">王诗雨</button>
-            <button onclick="go('liusiuyu')">刘思雨</button>
-            <button onclick="go('wuhao')">吴浩宇</button>
-            <button onclick="go('jianweiwei')">简微微</button>
-            <button onclick="go('wengjiajia')">翁嘉嘉</button>
-            <button onclick="go('wuyuhao')">吴宇浩</button>
-            <button onclick="go('chenqizhong')">陈启忠</button>
-            <button onclick="go('liubingyi')">刘冰怡</button>
-            <button onclick="go('helianhai')">何连海</button>
-            <button onclick="go('renji')">任吉</button>
-        </div>
-    </div>
-
+    <div class="row">— ESP 玩家列表 —</div>
+    <div id="esp"></div>
 </div>
 
+<!-- 骨骼 & 雷达 -->
+<canvas id="draw"></canvas>
+
 <script>
-/* ⭐ 星星 */
-for(let i=0;i<40;i++){
-    const s=document.createElement("div");
-    s.className="star";
-    s.style.left=Math.random()*100+"%";
-    s.style.top=Math.random()*100+"%";
-    s.style.animationDelay=Math.random()*2+"s";
-    document.getElementById("stars").appendChild(s);
+const ui = document.getElementById("ui");
+const canvas = document.getElementById("draw");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+/* ===== 拖动 UI ===== */
+let drag=false,ox,oy;
+ui.onmousedown=e=>{drag=true;ox=e.clientX-ui.offsetLeft;oy=e.clientY-ui.offsetTop};
+document.onmousemove=e=>{if(!drag)return;ui.style.left=e.clientX-ox+"px";ui.style.top=e.clientY-oy+"px"};
+document.onmouseup=()=>drag=false;
+
+/* ===== 模拟玩家数据 ===== */
+let players = [];
+for(let i=0;i<4;i++){
+    players.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        name: "Player_"+i
+    });
 }
 
-/* ❤️ 爱心 */
-const hearts=["💗","💕","💖","💘"];
-for(let i=0;i<15;i++){
-    const h=document.createElement("div");
-    h.className="heart";
-    h.innerText=hearts[Math.floor(Math.random()*hearts.length)];
-    h.style.left=Math.random()*100+"%";
-    h.style.animationDuration=(4+Math.random()*4)+"s";
-    h.style.fontSize=(14+Math.random()*10)+"px";
-    document.getElementById("hearts").appendChild(h);
+/* ===== 骨骼绘制 ===== */
+function drawSkeleton(p){
+    ctx.strokeStyle = "rgba(0,255,136,0.9)";
+    ctx.lineWidth = 2;
+
+    // 头
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 14, 0, Math.PI*2);
+    ctx.stroke();
+
+    // 身体
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y+14);
+    ctx.lineTo(p.x, p.y+60);
+    ctx.stroke();
+
+    // 手
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y+30);
+    ctx.lineTo(p.x-20, p.y+50);
+    ctx.moveTo(p.x, p.y+30);
+    ctx.lineTo(p.x+20, p.y+50);
+    ctx.stroke();
+
+    // 腿
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y+60);
+    ctx.lineTo(p.x-15, p.y+100);
+    ctx.moveTo(p.x, p.y+60);
+    ctx.lineTo(p.x+15, p.y+100);
+    ctx.stroke();
 }
 
-/* 音乐控制 */
-let musicOn=true;
-const bgm=document.getElementById("bgm");
-const btn=document.getElementById("musicBtn");
+/* ===== 雷达 ===== */
+function drawRadar(){
+    const cx=150, cy=canvas.height-150;
+    ctx.strokeStyle = "rgba(0,255,136,0.5)";
+    ctx.beginPath();
+    ctx.arc(cx,cy,80,0,Math.PI*2);
+    ctx.stroke();
 
-function toggleMusic(){
-    musicOn=!musicOn;
-    musicOn?(bgm.play(),btn.innerText="🎵 音乐 ON"):
-           (bgm.pause(),btn.innerText="🔇 音乐 OFF");
+    players.forEach(p=>{
+        ctx.fillStyle="red";
+        ctx.beginPath();
+        ctx.arc(
+            cx + (p.x-canvas.width/2)*0.1,
+            cy + (p.y-canvas.height/2)*0.1,
+            4,0,Math.PI*2
+        );
+        ctx.fill();
+    });
 }
 
-/* 加载条 */
-function load(){
-    document.getElementById("load").classList.remove("hidden");
-    let p=0;
-    const bar=document.getElementById("bar");
-    const txt=document.getElementById("txt");
+/* ===== ESP ===== */
+function updateESP(){
+    esp.innerHTML = players.map(p=>
+        `<div>${p.name} [${Math.floor(Math.random()*100)}HP]</div>`
+    ).join("");
+}
 
-    const t=setInterval(()=>{
-        p+=Math.random()*15;
-        if(p>100)p=100;
-        bar.style.width=p+"%";
-        txt.innerText=Math.floor(p)+"%";
-        if(p===100){
-            clearInterval(t);
-            setTimeout(()=>{
-                document.getElementById("load").classList.add("hidden");
-                document.getElementById("success").classList.remove("hidden");
-            },800);
+/* ===== 主循环 ===== */
+function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    players.forEach(p=>{
+        drawSkeleton(p);
+        p.x += (Math.random()-0.5)*6;
+        p.y += (Math.random()-0.5)*6;
+    });
+
+    drawRadar();
+    updateESP();
+
+    requestAnimationFrame(loop);
+}
+loop();
+
+/* ===== WebSocket 模拟 ===== */
+function mockWS(){
+    setInterval(()=>{
+        if(Math.random()>0.8){
+            target.textContent = players[Math.floor(Math.random()*players.length)].name;
+            status.textContent = "锁定 🔴";
         }
-    },200);
+    },1200);
 }
+mockWS();
 
-/* 跳转 */
-function go(u){
-    const urls={
-        wushuai:"https://v.kuaishou.com/KURYc1PN",
-        yangyuxuan:"https://v.kuaishou.com/KQ7sLkc1",
-        qinshuocheng:"https://v.kuaishou.com/KIvhxP4R",
-        wangjiaxin:"https://v.kuaishou.com/JPbXiuFT",
-        qingyuebing:"https://v.kuaishou.com/KGL45VNJ",
-        qingzhengyv:"https://v.kuaishou.com/JU1x3M6x",
-
-        wangsihiyu:"https://v.kuaishou.com/JDkSRwDZ",
-        liusiuyu:"https://v.kuaishou.com/J2M1qW2t",
-        wuhao:"https://v.kuaishou.com/JzMowMEX",
-        jianweiwei:"https://v.kuaishou.com/nHdHyWE8",
-        wengjiajia:"https://v.kuaishou.com/JU2PGW6I",
-        wuyuhao:"https://v.kuaishou.com/KxwEFlv1",
-        chenqizhong:"https://v.kuaishou.com/Kpc7WoKX",
-        liubingyi:"https://v.kuaishou.com/noQDq8t9",
-        helianhai:"https://v.kuaishou.com/JVGRoJ3y",
-        renji:"https://v.kuaishou.com/nhY7EvkH"
-    };
-    window.open(urls[u],"_blank");
-}
-
-load();
+/* 状态 */
+status.textContent = "运行中";
 </script>
+
 </body>
 </html>
