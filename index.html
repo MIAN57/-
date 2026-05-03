@@ -49,3 +49,72 @@
     border: 1px solid #fff;
 }
 </style>
+
+<div id="floatBox">
+    <div class="close-btn" onclick="closeFloat()">X</div>
+    <div class="title">超自然悬浮</div>
+    <div class="content">正在运行...</div>
+</div>
+
+<script>
+    // 1. 实现拖动功能
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+    const floatBox = document.getElementById('floatBox');
+
+    floatBox.addEventListener('mousedown', (e) => {
+        // 如果点击的是关闭按钮，则不触发拖动
+        if (e.target.classList.contains('close-btn')) return;
+        
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = floatBox.offsetLeft;
+        initialTop = floatBox.offsetTop;
+        
+        // 防止拖动时选中文字
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        // 计算新位置，并限制在屏幕内
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+        
+        // 简单边界限制
+        newLeft = Math.max(0, Math.min(window.innerWidth - floatBox.offsetWidth, newLeft));
+        newTop = Math.max(0, Math.min(window.innerHeight - floatBox.offsetHeight, newTop));
+        
+        floatBox.style.left = newLeft + 'px';
+        floatBox.style.top = newTop + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    // 2. 关闭悬浮窗的逻辑
+    function closeFloat() {
+        // 告诉打包工具（如uni-app）销毁窗口
+        if (window.webkit && window.webkit.messageHandlers) {
+            window.webkit.messageHandlers.closeWindow.postMessage(null);
+        } else {
+            // 普通浏览器里直接关闭
+            window.close();
+            // 如果是APP内嵌，可能需要调用原生方法
+            // plus.android.runtimeMainActivity().moveTaskToBack(true);
+        }
+    }
+
+    // 模拟一些动态数据刷新
+    setInterval(() => {
+        const now = new Date().toLocaleTimeString();
+        document.querySelector('.content').innerText = `已锁定: ${now}`;
+    }, 1000);
+</script>
+
