@@ -1,120 +1,325 @@
-/* 悬浮窗容器样式：模仿视频里的暗黑科技风 */
-#floatBox {
-    position: absolute;
-    width: 160px;
-    height: 80px;
-    background: rgba(20, 20, 30, 0.85);
-    border: 1px solid rgba(100, 200, 255, 0.6);
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 200, 255, 0.5);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    cursor: move; /* 鼠标悬停变小手 */
-    top: 100px;
-    left: 50px;
-    z-index: 99999;
-}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>超自然AD辅助</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:微软雅黑,sans-serif;}
+body{background:#000;color:#fff;height:100vh;overflow:hidden;}
 
-.title {
-    font-size: 14px;
-    color: #00ccff;
-    text-shadow: 0 0 5px #00ccff;
-    margin-bottom: 5px;
-}
+/* 标题 */
+.title{text-align:center;font-size:30px;margin-top:80px;letter-spacing:2px;}
 
-.content {
-    font-size: 12px;
-    color: #ccc;
-}
+/* 进度条 */
+.progWrap{width:320px;margin:60px auto 0;}
+.progText{text-align:center;font-size:18px;margin-bottom:10px;}
+.progBg{width:100%;height:22px;background:#222;border-radius:12px;overflow:hidden;border:1px solid #00aaff;}
+.progFill{height:100%;width:0;background:#00aaff;transition:all 0.3s;}
 
-/* 关闭按钮样式 */
-.close-btn {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 20px;
-    height: 20px;
-    background: #ff4757;
-    border-radius: 50%;
-    color: white;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(255, 71, 87, 0.8);
-    border: 1px solid #fff;
-}
+/* 开启按钮 */
+.btnOpen{display:block;width:130px;height:45px;line-height:45px;text-align:center;background:#00aaff;border:none;border-radius:8px;font-size:17px;margin:100px auto 0;cursor:pointer;}
+.btnOpen:active{opacity:0.8;}
+
+/* 密钥弹窗 */
+.keyModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;padding:25px;background:#111;border:1px solid #00aaff;border-radius:10px;z-index:998;display:none;}
+.keyModal h3{text-align:center;margin-bottom:20px;}
+.keyModal input{width:100%;height:40px;background:#222;border:1px solid #444;border-radius:6px;padding:0 10px;outline:none;font-size:16px;margin-bottom:15px;}
+.btnLogin{width:100%;height:40px;background:#00aaff;border:none;border-radius:6px;cursor:pointer;font-size:16px;}
+
+/* 欢迎页面 */
+.welcomePage{position:fixed;top:0;left:0;width:100%;height:100vh;background:#000;z-index:100;display:none;}
+.welText{text-align:center;font-size:26px;margin-top:150px;}
+.btnEnterGame{display:block;width:160px;height:50px;line-height:50px;text-align:center;background:#00aaff;border-radius:8px;margin:50px auto 0;font-size:18px;cursor:pointer;}
+
+/* 功能悬浮窗 */
+.floatMenu{position:fixed;top:120px;left:15px;width:340px;background:#111;border:1px solid #00aaff;border-radius:10px;padding:15px;z-index:9999;display:none;}
+.menuLeft{float:left;width:80px;}
+.menuLeft button{display:block;width:100%;height:38px;margin:6px 0;background:#222;border:1px solid #444;border-radius:4px;cursor:pointer;}
+.menuRight{margin-left:90px;min-height:300px;}
+.item{margin:10px 0;display:flex;align-items:center;gap:8px;}
+.item input[type=checkbox]{width:18px;height:18px;}
+.range{width:100%;margin:6px 0;}
+.subBtn{width:100%;margin:4px 0;padding:7px;background:#222;border:1px solid #444;border-radius:4px;cursor:pointer;}
+
+/* 缩小图标 */
+.miniIcon{position:fixed;top:120px;left:15px;width:45px;height:45px;background:#fff;color:#000;font-size:20px;font-weight:bold;text-align:center;line-height:45px;border-radius:4px;cursor:pointer;z-index:9999;display:none;}
+
+/* 神秘飘落小窗 */
+.dropTip{position:fixed;padding:6px 12px;background:#111;border:1px solid #00aaff;border-radius:4px;font-size:14px;z-index:99999;}
 </style>
+</head>
+<body>
 
-<div id="floatBox">
-    <div class="close-btn" onclick="closeFloat()">X</div>
-    <div class="title">超自然悬浮</div>
-    <div class="content">正在运行...</div>
+<div class="title">超自然AD辅助</div>
+
+<div class="progWrap">
+    <div class="progText" id="progTxt">开启中 0%</div>
+    <div class="progBg">
+        <div class="progFill" id="progFill"></div>
+    </div>
 </div>
 
+<button class="btnOpen" id="btnOpen">开启</button>
+
+<!-- 密钥弹窗 -->
+<div class="keyModal" id="keyModal">
+    <h3 id="keyTitle">密钥输入</h3>
+    <input type="text" id="keyInput" placeholder="输入密钥">
+    <button class="btnLogin" id="btnLogin">登录验证</button>
+</div>
+
+<!-- 欢迎页 -->
+<div class="welcomePage" id="welcomePage">
+    <div class="welText" id="welText">欢迎使用AD辅助，祝您游戏愉快</div>
+    <div class="btnEnterGame" id="btnEnter">进入游戏</div>
+</div>
+
+<!-- 功能悬浮窗 -->
+<div class="floatMenu" id="floatMenu">
+    <div class="menuLeft">
+        <button data-type="draw">绘制</button>
+        <button data-type="silent">静默</button>
+        <button data-type="memory">内存</button>
+        <button data-type="mystery">神秘功能</button>
+        <button data-type="mini">缩小</button>
+    </div>
+    <div class="menuRight" id="menuRight"></div>
+</div>
+
+<!-- 缩小图标 -->
+<div class="miniIcon" id="miniIcon">AD</div>
+
 <script>
-    // 1. 实现拖动功能
-    let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
-    const floatBox = document.getElementById('floatBox');
+// 元素
+const btnOpen = document.getElementById('btnOpen');
+const keyModal = document.getElementById('keyModal');
+const keyTitle = document.getElementById('keyTitle');
+const keyInput = document.getElementById('keyInput');
+const btnLogin = document.getElementById('btnLogin');
+const progTxt = document.getElementById('progTxt');
+const progFill = document.getElementById('progFill');
+const welcomePage = document.getElementById('welcomePage');
+const welText = document.getElementById('welText');
+const btnEnter = document.getElementById('btnEnter');
+const floatMenu = document.getElementById('floatMenu');
+const menuRight = document.getElementById('menuRight');
+const miniIcon = document.getElementById('miniIcon');
+const menuBtns = document.querySelectorAll('.menuLeft button');
 
-    floatBox.addEventListener('mousedown', (e) => {
-        // 如果点击的是关闭按钮，则不触发拖动
-        if (e.target.classList.contains('close-btn')) return;
-        
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialLeft = floatBox.offsetLeft;
-        initialTop = floatBox.offsetTop;
-        
-        // 防止拖动时选中文字
-        e.preventDefault();
-    });
+// 配置
+const rightKey = "爱搭牛逼";
+const progList = [15,20,35,55,60,70,100];
+let mysteryOn = false;
+let dropArr = [];
 
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        
-        // 计算新位置，并限制在屏幕内
-        let newLeft = initialLeft + dx;
-        let newTop = initialTop + dy;
-        
-        // 简单边界限制
-        newLeft = Math.max(0, Math.min(window.innerWidth - floatBox.offsetWidth, newLeft));
-        newTop = Math.max(0, Math.min(window.innerHeight - floatBox.offsetHeight, newTop));
-        
-        floatBox.style.left = newLeft + 'px';
-        floatBox.style.top = newTop + 'px';
-    });
+// 默认绘制面板
+renderDraw();
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
+// 打开密钥弹窗
+btnOpen.onclick = ()=>{
+    keyModal.style.display = 'block';
+    keyTitle.innerText = '密钥输入';
+    keyInput.value = '';
+};
 
-    // 2. 关闭悬浮窗的逻辑
-    function closeFloat() {
-        // 告诉打包工具（如uni-app）销毁窗口
-        if (window.webkit && window.webkit.messageHandlers) {
-            window.webkit.messageHandlers.closeWindow.postMessage(null);
-        } else {
-            // 普通浏览器里直接关闭
-            window.close();
-            // 如果是APP内嵌，可能需要调用原生方法
-            // plus.android.runtimeMainActivity().moveTaskToBack(true);
+// 密钥验证
+btnLogin.onclick = ()=>{
+    let val = keyInput.value.trim();
+    if(val !== rightKey){
+        keyTitle.innerText = '密钥不存在';
+        setTimeout(()=>{
+            keyModal.style.display = 'none';
+            setTimeout(()=>{
+                keyTitle.innerText = '密钥输入';
+                keyInput.value = '';
+            },1000);
+        },1000);
+        return;
+    }
+    keyTitle.innerText = '密钥验证成功';
+    setTimeout(()=>{
+        keyModal.style.display = 'none';
+        startProg();
+    },800);
+};
+
+// 进度条加载
+function startProg(){
+    let i = 0;
+    function next(){
+        if(i >= progList.length){
+            progTxt.innerText = '开启成功';
+            setTimeout(()=>{
+                welcomePage.style.display = 'block';
+                floatMenu.style.display = 'block';
+            },500);
+            return;
+        }
+        let p = progList[i];
+        progFill.style.width = p + '%';
+        progTxt.innerText = `开启中 ${p}%`;
+        i++;
+        setTimeout(next,400);
+    }
+    next();
+}
+
+// 进入游戏 直接跳转不拦截
+btnEnter.onclick = ()=>{
+    // 直接唤起超自然行动组，绕过浏览器拦截
+    location.href = "snaction://";
+};
+
+// 左侧菜单按钮
+menuBtns.forEach(btn=>{
+    btn.onclick = function(){
+        let t = this.dataset.type;
+        switch(t){
+            case 'draw': renderDraw(); break;
+            case 'silent': renderSilent(); break;
+            case 'memory': renderMemory(); break;
+            case 'mystery': toggleMystery(); break;
+            case 'mini':
+                floatMenu.style.display = 'none';
+                miniIcon.style.display = 'block';
+                break;
         }
     }
+});
 
-    // 模拟一些动态数据刷新
-    setInterval(() => {
-        const now = new Date().toLocaleTimeString();
-        document.querySelector('.content').innerText = `已锁定: ${now}`;
-    }, 1000);
+// 缩小图标复原
+miniIcon.onclick = ()=>{
+    miniIcon.style.display = 'none';
+    floatMenu.style.display = 'block';
+};
+
+// 绘制面板
+function renderDraw(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 绘制天线</div>
+        <div class="item"><input type="checkbox"> 绘制手持</div>
+        <div class="item"><input type="checkbox"> 绘制背包</div>
+        <div class="item"><input type="checkbox"> 绘制装备</div>
+        <div class="item"><input type="checkbox"> 绘制队友</div>
+    `;
+}
+
+// 静默面板
+function renderSilent(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 开启静默</div>
+        <div class="item"><input type="checkbox"> 开启完美静默</div>
+        <div class="item"><input type="checkbox"> 忽略队友</div>
+        <div style="margin-top:15px">
+            <div>左右偏移 <input type="range" class="range" min="-5" max="25" value="0"></div>
+            <div>上下偏移 <input type="range" class="range" min="-5" max="25" value="0"></div>
+            <div>平地偏移 <input type="range" class="range" min="-5" max="25" value="0"></div>
+        </div>
+    `;
+}
+
+// 内存面板
+function renderMemory(){
+    menuRight.innerHTML = `
+        <button class="subBtn" id="btnWp">武器</button>
+        <button class="subBtn" id="btnVs">广角夜视</button>
+        <button class="subBtn" id="btnAt">自动切</button>
+        <button class="subBtn" id="btnRt">旋转</button>
+    `;
+    document.getElementById('btnWp').onclick = renderWeapon;
+    document.getElementById('btnVs').onclick = renderVision;
+    document.getElementById('btnAt').onclick = renderAuto;
+    document.getElementById('btnRt').onclick = renderRotate;
+}
+
+// 武器面板
+function renderWeapon(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 桃木剑范围</div>
+        <div class="item"><input type="checkbox"> 刺刀范围</div>
+        <div class="item"><input type="checkbox"> 铲子范围</div>
+        <div class="item"><input type="checkbox"> 鞭子范围</div>
+        <div class="item"><input type="checkbox"> 扇子范围</div>
+        <div class="item"><input type="checkbox"> 修改熊用</div>
+        <div class="item"><input type="checkbox"> 全武器无后摇</div>
+        <div class="item"><input type="checkbox"> 准心据点</div>
+        <div class="item"><input type="checkbox"> 秒交互</div>
+    `;
+}
+
+// 广角夜视
+function renderVision(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 开启广角</div>
+        <div class="item"><input type="checkbox"> 开启夜视</div>
+        <div class="item"><input type="checkbox"> 除雾导航</div>
+    `;
+}
+
+// 自动切
+function renderAuto(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 自动切喷包</div>
+        <div class="item"><input type="checkbox"> 自动切枪</div>
+        <div class="item"><input type="checkbox"> 自动切摸金</div>
+        <div class="item"><input type="checkbox"> 自动换弹</div>
+        <div class="item"><input type="checkbox"> 自动切黄牛</div>
+        <div class="item"><input type="checkbox"> 自动关闭陷阱</div>
+        <div class="item"><input type="checkbox"> 自动关闭连弩</div>
+        <div class="item"><input type="checkbox"> 杀戮光环</div>
+    `;
+}
+
+// 旋转
+function renderRotate(){
+    menuRight.innerHTML = `
+        <div class="item"><input type="checkbox"> 人物旋转</div>
+        <input type="range" class="range" min="0" max="100" value="50">
+        <div class="item"><input type="checkbox"> 磕头速度</div>
+        <input type="range" class="range" min="0" max="100" value="50">
+    `;
+}
+
+// 神秘功能
+function toggleMystery(){
+    mysteryOn = !mysteryOn;
+    if(mysteryOn){
+        welText.innerText = '永远怀念ptr😭';
+        startDrop();
+    }else{
+        welText.innerText = '欢迎使用AD辅助，祝您游戏愉快';
+        stopDrop();
+    }
+}
+
+// 飘落文字
+function startDrop(){
+    let t = setInterval(()=>{
+        if(!mysteryOn){clearInterval(t);return;}
+        let d = document.createElement('div');
+        d.className = 'dropTip';
+        d.innerText = '永远怀念ptr😭';
+        d.style.left = Math.random()*innerWidth+'px';
+        d.style.top = '-30px';
+        document.body.appendChild(d);
+        dropArr.push(d);
+
+        let top = -30;
+        function move(){
+            top +=1.5;
+            d.style.top = top+'px';
+            if(top>innerHeight){d.remove();}
+            requestAnimationFrame(move);
+        }
+        move();
+    },250);
+}
+
+function stopDrop(){
+    dropArr.forEach(d=>d.remove());
+    dropArr = [];
+}
 </script>
-
+</body>
+</html>
